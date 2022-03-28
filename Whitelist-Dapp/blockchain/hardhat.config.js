@@ -7,7 +7,7 @@ const RINKEBY_PRIVATE_KEY = process.env.RINKEBY_PRIVATE_KEY;
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 
 module.exports = {
-	solidity: '0.8.4',
+	solidity: '0.8.10',
 	networks: {
 		rinkeby: {
 			url: INFURA_API_KEY_URL,
