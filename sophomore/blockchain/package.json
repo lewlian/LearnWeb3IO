@@ -5,7 +5,8 @@
 	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"deploy-rinkeby": "npx hardhat run scripts/deploy.js --network rinkeby"
+		"deploy-rinkeby": "npx hardhat run scripts/deploy.js --network rinkeby",
+		"deploy-rinkeby-dao": "npx hardhat run scripts/deploy_dao.js --network rinkeby"
 	},
 	"keywords": [],
 	"author": "",
