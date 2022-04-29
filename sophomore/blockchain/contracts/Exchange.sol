@@ -71,5 +71,37 @@ contract Exchange is ERC20 {
     return (ethAmount, cryptoDevTokenAmount);
   }
 
-  // to implement: swap functionality 
+  // Returns the amount ETH/CD tokens that would be returned to the user in the swap 
+  function getAmountOfTokens(uint256 inputAmount, uint256 inputReserve, uint256 outputReserve) public pure returns (uint256) {
+    require(inputReserve > 0 && outputReserve > 0, "invalid reserves");
+
+    uint256 inputAmountWithFee = inputAmount * 99; 
+
+    uint256 numerator = inputAmountWithFee * outputReserve;
+    uint256 denominator = (inputReserve * 100) + inputAmountWithFeel;
+    return numerator/denominator;
+  }
+
+  function ethToCryptoDevToken(uint256 _minTokens) public payable {
+    uint256 tokenReserve = getReserve();
+    uint256 tokensBought = getAmountOfTokens(msg.value, address(this).balance - msg.value, tokenReserve);
+
+    //getAmountOfTokens returns the maximum of what the user is allowed to swap based on the ETH that he is intending to swap
+    require(tokensBought >= _minTokens, "insufficient output amount");
+    ERC20(cryptoDevTokenAddress).transfer(msg.sender, tokensBought);
+  }
+
+  /// @param _minEth is the amount of eth the user will accept
+  /// @param _tokensSold is the amount of CD tokens that the user want to sell
+  function cryptoDevTokenToEth(uint _tokensSold, uint _minEth) public {
+    uint256 tokenReserve = getReserve(); // get the amount of CD tokens in exchange
+
+    // calculated the amount of ETH that should be allowed to swap based on CD tokens
+    uint256 ethBought = getAmountOfTokens(_tokensSold, tokenReserve, address(this).balance);
+    require(ethBought >= _minEth, "insufficient output amount");
+
+    ERC20(cryptoDevTokenAddress).transferFrom(msg.sender, address(this), _tokensSold);
+
+    payable(msg.sender).transfer(ethBought);
+  }
 }
