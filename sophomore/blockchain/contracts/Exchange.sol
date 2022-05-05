@@ -28,7 +28,7 @@ contract Exchange is ERC20 {
     uint256 liquidity;
     uint256 ethBalance = address(this).balance; // note that this is after adding incoming ETH
     uint256 cryptoDevTokenReserve = getReserve();
-    ERC20 cryptoDevToken = erc20(cryptoDevTokenAddress);
+    ERC20 cryptoDevToken = ERC20(cryptoDevTokenAddress);
 
     // token reserve is empty
     if(cryptoDevTokenReserve == 0) {
@@ -42,7 +42,7 @@ contract Exchange is ERC20 {
       // check to make sure user didn't ask for more than allowed
       require(_amount >= cryptoDevTokenAmount, "Amount of tokens sent is less than the minimum tokens required");
 
-      cryptoDevtoken.transferFrom(msg.sender, address(this), cryptoDevTokenAmount);
+      cryptoDevToken.transferFrom(msg.sender, address(this), cryptoDevTokenAmount);
       liquidity = (totalSupply() * msg.value)/ethReserve;
       _mint(msg.sender, liquidity);
     }
@@ -63,7 +63,7 @@ contract Exchange is ERC20 {
     // burn the LP token minted originally from this contract
     _burn(msg.sender, _amount); 
     // Send back the ETH equivalent for withdrawal
-    (bool success, ) = msg.sender.call{value: ethAmount};
+    bool success = payable(msg.sender).send(ethAmount);
     require(success, "withdrawal failed");
 
     // Send back the CryptoDev Token equivalent for withdrawal
@@ -78,7 +78,7 @@ contract Exchange is ERC20 {
     uint256 inputAmountWithFee = inputAmount * 99; 
 
     uint256 numerator = inputAmountWithFee * outputReserve;
-    uint256 denominator = (inputReserve * 100) + inputAmountWithFeel;
+    uint256 denominator = (inputReserve * 100) + inputAmountWithFee;
     return numerator/denominator;
   }
 
